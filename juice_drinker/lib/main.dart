@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-
-import 'widgets/juice_page_widget.dart';
-import 'widgets/shop_page_widget.dart';
+import 'package:juice_drinker/widgets/juice_page_widget.dart';
+import 'package:juice_drinker/widgets/shop_page_widget.dart';
 
 void main() {
   runApp(const MainApp());
@@ -12,9 +11,13 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: 'Juice Drinker',
-      home: HomePage(),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 124, 207, 216)),
+        useMaterial3: true,
+      ),
+      home: const HomePage(),
     );
   }
 }
@@ -47,11 +50,11 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.local_drink),
+            icon: Icon(Icons.local_drink, size: 32),
             label: 'Juice',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_basket_outlined),
+            icon: Icon(Icons.shopping_basket_outlined, size: 32),
             label: 'Shop',
           ),
         ],
