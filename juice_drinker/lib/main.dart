@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'widgets/juice_page_widget.dart';
+import 'widgets/shop_page_widget.dart';
+
 void main() {
   runApp(const MainApp());
 }
@@ -16,15 +19,31 @@ class MainApp extends StatelessWidget {
   }
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 0;
+
+  static const List<Widget> _pages = <Widget>[
+    JuicePage(),
+    ShopPage(),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: const Center(
-        child: Text('Juice Drinker Home'),
-      ),
+      body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(
@@ -36,6 +55,8 @@ class HomePage extends StatelessWidget {
             label: 'Shop',
           ),
         ],
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
       ),
     );
   }
