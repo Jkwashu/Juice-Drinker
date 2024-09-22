@@ -1,13 +1,26 @@
-
 import 'package:flutter/material.dart';
+import 'package:liquid_progress_indicator_v2/liquid_progress_indicator.dart';
 
-class JuicePage extends StatelessWidget {
+class JuicePage extends StatefulWidget {
   const JuicePage({super.key});
 
   @override
+  _JuicePageState createState() => _JuicePageState();
+}
+
+class _JuicePageState extends State<JuicePage> {
+  double _drinkHeight = .8; // DRINK HEIGHT
+
+  @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Juice Page'),
+    return Center(
+      child: LiquidLinearProgressIndicator(
+                value: _drinkHeight,
+                direction: Axis.vertical,
+                center: Text(
+                  '${(_drinkHeight * 100)}%'
+                ),
+              ),
     );
   }
 }
