@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:juice_drinker/widgets/juice_page_widget.dart';
-import 'package:juice_drinker/widgets/shop_page_widget.dart';
+import 'package:juice_drinker/pages/juice_page.dart';
+import 'package:juice_drinker/pages/shop_page.dart';
 
 void main() {
   runApp(const MainApp());

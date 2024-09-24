@@ -16,6 +16,7 @@ class _JuicePageState extends State<JuicePage> {
     return Center(
       child: LiquidLinearProgressIndicator(
                 value: _drinkHeight,
+                valueColor: const AlwaysStoppedAnimation(Color.fromARGB(255, 42, 196, 210)),
                 direction: Axis.vertical,
                 center: Text(
                   '${(_drinkHeight * 100)}%'
