@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:juice_drinker/objects/juice.dart';
 import 'package:juice_drinker/pages/juice_page.dart';
 import 'package:juice_drinker/pages/shop_page.dart';
 
@@ -32,10 +33,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
-  static const List<Widget> _pages = <Widget>[
-    JuicePage(),
-    ShopPage(),
-  ];
+  Juice _currentJuice = Juice(color: const Color.fromARGB(255, 20, 251, 255), name: 'Water'); // INITIAL JUICE
 
   void _onItemTapped(int index) {
     setState(() {
@@ -43,10 +41,23 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  // Method to update the current juice (use this in ShopPage later)
+  void _updateJuice(Juice newJuice) {
+    setState(() {
+      _currentJuice = newJuice;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Pass the current juice to JuicePage and update method to ShopPage
+    final List<Widget> pages = <Widget>[
+      JuicePage(juice: _currentJuice),
+      ShopPage(), // Passing update function
+    ];
+
     return Scaffold(
-      body: _pages[_selectedIndex],
+      body: pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(
@@ -64,3 +75,4 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
