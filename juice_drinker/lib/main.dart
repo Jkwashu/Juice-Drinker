@@ -52,6 +52,12 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void _updateCoins(int amount) {
+    setState(() {
+      _coins += amount;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // Pass the current juice to JuicePage and update method to ShopPage
@@ -60,6 +66,7 @@ class _HomePageState extends State<HomePage> {
       ShopPage(
         onJuiceUpdate: _updateJuice,
         coins: _coins,
+        onCoinUpdate: _updateCoins,
       ), // Passing update function
     ];
 

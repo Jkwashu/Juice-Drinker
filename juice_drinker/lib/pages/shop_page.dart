@@ -3,10 +3,15 @@ import 'package:juice_drinker/objects/juice.dart';
 
 class ShopPage extends StatefulWidget {
   final Function(Juice) onJuiceUpdate;
+  final Function(int) onCoinUpdate;
   final int coins;
 
-  const ShopPage({Key? key, required this.onJuiceUpdate, required this.coins})
-      : super(key: key);
+  const ShopPage({
+    Key? key,
+    required this.onJuiceUpdate,
+    required this.coins,
+    required this.onCoinUpdate,
+  }) : super(key: key);
 
   @override
   _ShopPageState createState() => _ShopPageState();
@@ -28,6 +33,7 @@ class _ShopPageState extends State<ShopPage> {
       setState(() {
         _juices[_currentIndex].purchased = true;
         widget.onJuiceUpdate(_juices[_currentIndex]);
+        widget.onCoinUpdate(-_juices[_currentIndex].price);
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
