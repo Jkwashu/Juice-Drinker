@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:juice_drinker/objects/juice.dart';
 
-class ShopPage extends StatelessWidget {
+class ShopPage extends StatefulWidget {
   final Function(Juice) onJuiceUpdate;
   final int coins;
 
@@ -14,13 +14,34 @@ class ShopPage extends StatelessWidget {
 
 class _ShopPageState extends State<ShopPage> {
   int _currentIndex = 0;
-  List<Juice> _juices = [
+  final List<Juice> _juices = [
     Juice(color: Colors.orange, name: 'Orange Juice', price: 20),
     Juice(color: Colors.purple, name: 'Grape Juice', price: 20),
     Juice(color: Colors.red, name: 'Cranberry Juice', price: 20),
     Juice(color: Colors.blue, name: 'Blueberry Juice', price: 20),
     Juice(color: Colors.green, name: 'Grapefruit Juice', price: 20),
   ];
+
+  void _purchaseJuice() {
+    if (widget.coins >= _juices[_currentIndex].price &&
+        !_juices[_currentIndex].purchased) {
+      setState(() {
+        _juices[_currentIndex].purchased = true;
+        widget.onJuiceUpdate(_juices[_currentIndex]);
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Not enough coins or already purchased!')),
+      );
+    }
+  }
+
+  void _equipJuice() {
+    widget.onJuiceUpdate(_juices[_currentIndex]);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('${_juices[_currentIndex].name} equipped!')),
+    );
+  }
 
   void _nextJuice() {
     setState(() {
@@ -81,10 +102,11 @@ class _ShopPageState extends State<ShopPage> {
           ),
           const SizedBox(height: 20),
           ElevatedButton(
-            onPressed: () {
-              // TODO: Implement purchase logic
-            },
-            child: Text('Buy for ${_juices[_currentIndex].price} coins'),
+            onPressed:
+                _juices[_currentIndex].purchased ? _equipJuice : _purchaseJuice,
+            child: Text(_juices[_currentIndex].purchased
+                ? 'Equip'
+                : 'Buy for ${_juices[_currentIndex].price} coins'),
           ),
         ],
       ),
