@@ -4,13 +4,19 @@ import 'package:juice_drinker/objects/juice.dart';
 class ShopPage extends StatefulWidget {
   final Function(Juice) onJuiceUpdate;
   final Function(int) onCoinUpdate;
+  final Function(Juice) onPurchase;
   final int coins;
+  final List<Juice> purchasedJuices;
+  final List<Juice> allJuices;
 
   const ShopPage({
     Key? key,
     required this.onJuiceUpdate,
     required this.coins,
     required this.onCoinUpdate,
+    required this.onPurchase,
+    required this.purchasedJuices,
+    required this.allJuices,
   }) : super(key: key);
 
   @override
@@ -19,21 +25,14 @@ class ShopPage extends StatefulWidget {
 
 class _ShopPageState extends State<ShopPage> {
   int _currentIndex = 0;
-  final List<Juice> _juices = [
-    Juice(color: Colors.orange, name: 'Orange Juice', price: 20),
-    Juice(color: Colors.purple, name: 'Grape Juice', price: 20),
-    Juice(color: Colors.red, name: 'Cranberry Juice', price: 20),
-    Juice(color: Colors.blue, name: 'Blueberry Juice', price: 20),
-    Juice(color: Colors.green, name: 'Grapefruit Juice', price: 20),
-  ];
 
   void _purchaseJuice() {
-    if (widget.coins >= _juices[_currentIndex].price &&
-        !_juices[_currentIndex].purchased) {
+    if (widget.coins >= widget.allJuices[_currentIndex].price &&
+        !widget.purchasedJuices.contains(widget.allJuices[_currentIndex])) {
       setState(() {
-        _juices[_currentIndex].purchased = true;
-        widget.onJuiceUpdate(_juices[_currentIndex]);
-        widget.onCoinUpdate(-_juices[_currentIndex].price);
+        widget.onPurchase(widget.allJuices[_currentIndex]);
+        widget.onJuiceUpdate(widget.allJuices[_currentIndex]);
+        widget.onCoinUpdate(-widget.allJuices[_currentIndex].price);
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -43,21 +42,23 @@ class _ShopPageState extends State<ShopPage> {
   }
 
   void _equipJuice() {
-    widget.onJuiceUpdate(_juices[_currentIndex]);
+    widget.onJuiceUpdate(widget.allJuices[_currentIndex]);
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('${_juices[_currentIndex].name} equipped!')),
+      SnackBar(
+          content: Text('${widget.allJuices[_currentIndex].name} equipped!')),
     );
   }
 
   void _nextJuice() {
     setState(() {
-      _currentIndex = (_currentIndex + 1) % _juices.length;
+      _currentIndex = (_currentIndex + 1) % widget.allJuices.length;
     });
   }
 
   void _previousJuice() {
     setState(() {
-      _currentIndex = (_currentIndex - 1 + _juices.length) % _juices.length;
+      _currentIndex = (_currentIndex - 1 + widget.allJuices.length) %
+          widget.allJuices.length;
     });
   }
 
@@ -92,10 +93,10 @@ class _ShopPageState extends State<ShopPage> {
               Container(
                 width: 200,
                 height: 200,
-                color: _juices[_currentIndex].color,
+                color: widget.allJuices[_currentIndex].color,
                 child: Center(
                   child: Text(
-                    _juices[_currentIndex].name,
+                    widget.allJuices[_currentIndex].name,
                     style: const TextStyle(color: Colors.white),
                   ),
                 ),
@@ -109,10 +110,13 @@ class _ShopPageState extends State<ShopPage> {
           const SizedBox(height: 20),
           ElevatedButton(
             onPressed:
-                _juices[_currentIndex].purchased ? _equipJuice : _purchaseJuice,
-            child: Text(_juices[_currentIndex].purchased
-                ? 'Equip'
-                : 'Buy for ${_juices[_currentIndex].price} coins'),
+                widget.purchasedJuices.contains(widget.allJuices[_currentIndex])
+                    ? _equipJuice
+                    : _purchaseJuice,
+            child: Text(
+                widget.purchasedJuices.contains(widget.allJuices[_currentIndex])
+                    ? 'Equip'
+                    : 'Buy for ${widget.allJuices[_currentIndex].price} coins'),
           ),
         ],
       ),
