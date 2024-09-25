@@ -15,7 +15,8 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       title: 'Juice Drinker',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 124, 207, 216)),
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color.fromARGB(255, 124, 207, 216)),
         useMaterial3: true,
       ),
       home: const HomePage(),
@@ -32,8 +33,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-
-  Juice _currentJuice = Juice(color: const Color.fromARGB(255, 20, 251, 255), name: 'Water'); // INITIAL JUICE
+  int _coins = 100;
+  Juice _currentJuice = Juice(
+      color: const Color.fromARGB(255, 20, 251, 255),
+      name: 'Water',
+      price: 0); // INITIAL JUICE
 
   void _onItemTapped(int index) {
     setState(() {
@@ -53,7 +57,10 @@ class _HomePageState extends State<HomePage> {
     // Pass the current juice to JuicePage and update method to ShopPage
     final List<Widget> pages = <Widget>[
       JuicePage(juice: _currentJuice),
-      ShopPage(), // Passing update function
+      ShopPage(
+        onJuiceUpdate: _updateJuice,
+        coins: _coins,
+      ), // Passing update function
     ];
 
     return Scaffold(
@@ -75,4 +82,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
