@@ -14,25 +14,23 @@ class JuicePage extends StatefulWidget {
 }
 
 class _JuicePageState extends State<JuicePage> {
-  double drinkHeight = 1; 
+  double drinkHeight = 0.9; 
 
   StreamSubscription<MagnetometerEvent>? _magnetometerSubscription;
   StreamSubscription<AccelerometerEvent>? _accelerometerSubscription;
   StreamSubscription<GyroscopeEvent>? _gyroscopeSubscription;
 
-  // Sensor readings
   MagnetometerEvent? _magnetometerEvent;
   AccelerometerEvent? _accelerometerEvent;
   GyroscopeEvent? _gyroscopeEvent;
 
-  double _yawDegrees = 0.0; // Yaw angle in degrees
+  double _yawDegrees = 0.0; 
 
   Timer? _drinkTimer;
 
-  // Shake detection variables
   DateTime? _lastShake;
-  final _shakeThreshold = 4.0; // Adjust this value to change shake sensitivity
-  final _shakeInterval = Duration(milliseconds: 500); // Minimum time between shakes
+  final _shakeThreshold = 4.0; //rad/s
+  final _shakeInterval = Duration(milliseconds: 500); //minimum time between shakes
 
   bool get isEmpty => drinkHeight <= 0;
 
@@ -66,9 +64,8 @@ class _JuicePageState extends State<JuicePage> {
         });
       },
     );
-
-    // Start a timer to update the drink height
-    _drinkTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+    //keep this at 50 (how smooth the liquid goes down  )
+     _drinkTimer = Timer.periodic(Duration(milliseconds: 50), (timer) {
       _updateDrinkHeight();
     });
   }
@@ -115,7 +112,7 @@ class _JuicePageState extends State<JuicePage> {
   void _updateDrinkHeight() {
     if (_yawDegrees >= 90 && _yawDegrees <= 270) {
       setState(() {
-        // Decrease the height slowly
+        //how fast the drink goes down
         drinkHeight = max(0, drinkHeight - 0.005);
       });
     } 
@@ -142,7 +139,7 @@ class _JuicePageState extends State<JuicePage> {
 
   void _refillJuice() {
     setState(() {
-      drinkHeight = 1.0; // Refill the juice
+      drinkHeight = 0.9; 
     });
   }
 
