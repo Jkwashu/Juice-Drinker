@@ -6,26 +6,41 @@ class JuiceWidget extends StatelessWidget {
   final Juice juice;
   final double height;
   final double rotation;
+  final double verticalOffset;
 
   const JuiceWidget({
     super.key,
     required this.juice,
     required this.height,
     required this.rotation,
+    this.verticalOffset = 80.0,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Transform.rotate(
-      angle: rotation * (3.14159 / 180), // Convert degrees to radians
-      child: LiquidLinearProgressIndicator(
-        value: height, 
-        valueColor: AlwaysStoppedAnimation(juice.color),
-        direction: Axis.vertical,
-        center: Text(
-          '${(height * 100).toStringAsFixed(0)}%', 
-        ),
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Transform.translate(
+          offset: Offset(0, verticalOffset), 
+          child: Transform.rotate(
+            angle: rotation * (3.14159 / 180),
+            child: OverflowBox(
+              maxWidth: double.infinity,
+              child: SizedBox(
+                width: 1000,
+                child: LiquidLinearProgressIndicator(
+                  value: height, 
+                  valueColor: AlwaysStoppedAnimation(juice.color),
+                  direction: Axis.vertical,
+                  center: Text(
+                    '${(height * 100).toStringAsFixed(0)}%', 
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }
