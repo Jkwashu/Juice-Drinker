@@ -18,14 +18,23 @@ class _JuicePageState extends State<JuicePage> {
 
   StreamSubscription<MagnetometerEvent>? _magnetometerSubscription;
   StreamSubscription<AccelerometerEvent>? _accelerometerSubscription;
+  StreamSubscription<GyroscopeEvent>? _gyroscopeSubscription;
 
   // Sensor readings
   MagnetometerEvent? _magnetometerEvent;
   AccelerometerEvent? _accelerometerEvent;
+  GyroscopeEvent? _gyroscopeEvent;
 
   double _yawDegrees = 0.0; // Yaw angle in degrees
 
   Timer? _drinkTimer;
+
+  // Shake detection variables
+  DateTime? _lastShake;
+  final _shakeThreshold = 4.0; // Adjust this value to change shake sensitivity
+  final _shakeInterval = Duration(milliseconds: 500); // Minimum time between shakes
+
+  bool get isEmpty => drinkHeight <= 0;
 
   @override
   void initState() {
@@ -49,6 +58,15 @@ class _JuicePageState extends State<JuicePage> {
       },
     );
 
+    _gyroscopeSubscription = gyroscopeEventStream().listen(
+      (GyroscopeEvent event) {
+        setState(() {
+          _gyroscopeEvent = event;
+          _detectShake();
+        });
+      },
+    );
+
     // Start a timer to update the drink height
     _drinkTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
       _updateDrinkHeight();
@@ -59,6 +77,7 @@ class _JuicePageState extends State<JuicePage> {
   void dispose() {
     _magnetometerSubscription?.cancel();
     _accelerometerSubscription?.cancel();
+    _gyroscopeSubscription?.cancel();
     _drinkTimer?.cancel();
     super.dispose();
   }
@@ -100,6 +119,31 @@ class _JuicePageState extends State<JuicePage> {
         drinkHeight = max(0, drinkHeight - 0.005);
       });
     } 
+  }
+
+  void _detectShake() {
+    if (_gyroscopeEvent == null) return;
+
+    double x = _gyroscopeEvent!.x.abs();
+    double y = _gyroscopeEvent!.y.abs();
+    double z = _gyroscopeEvent!.z.abs();
+
+    if ((x > _shakeThreshold) ||
+        (y > _shakeThreshold) ||
+        (z > _shakeThreshold)) {
+      
+      DateTime now = DateTime.now();
+      if (_lastShake == null || now.difference(_lastShake!) > _shakeInterval) {
+        _lastShake = now;
+        _refillJuice();
+      }
+    }
+  }
+
+  void _refillJuice() {
+    setState(() {
+      drinkHeight = 1.0; // Refill the juice
+    });
   }
 
   @override
