@@ -29,23 +29,22 @@ class _JuicePageState extends State<JuicePage> {
   void initState() {
     super.initState();
 
-    // Subscribe to magnetometer events
-    _magnetometerSubscription = magnetometerEvents.listen(
+    _magnetometerSubscription = magnetometerEventStream().listen(
       (MagnetometerEvent event) {
         setState(() {
           _magnetometerEvent = event;
-          _updateYaw(); // Update yaw when new magnetometer data is available
-          print(_yawDegrees);
+          _updateYaw(); 
+          
         });
       },
     );
 
     // Subscribe to accelerometer events
-    _accelerometerSubscription = accelerometerEvents.listen(
+    _accelerometerSubscription = accelerometerEventStream().listen(
       (AccelerometerEvent event) {
         setState(() {
           _accelerometerEvent = event;
-          _updateYaw(); // Update yaw when new accelerometer data is available
+          _updateYaw(); 
         });
       },
     );
@@ -58,39 +57,32 @@ class _JuicePageState extends State<JuicePage> {
     super.dispose();
   }
 
-  // Method to update yaw
 void _updateYaw() {
   if (_magnetometerEvent == null || _accelerometerEvent == null) {
-    return; // Wait until both sensor readings are available
+    return; 
   }
 
-  // Get accelerometer readings
   double accelX = _accelerometerEvent!.x;
   double accelY = _accelerometerEvent!.y;
   double accelZ = _accelerometerEvent!.z;
 
-  // Compute roll (phi) and pitch (theta)
+  //compute roll (phi) and pitch (theta)
   double phi = atan2(accelY, accelZ);
   double theta = atan2(-accelX, sqrt(accelY * accelY + accelZ * accelZ));
 
-  // Get magnetometer readings
   double magX = _magnetometerEvent!.x;
   double magY = _magnetometerEvent!.y;
   double magZ = _magnetometerEvent!.z;
 
-  // Compensate magnetometer readings
   double magXh = magX * cos(theta) + magZ * sin(theta);
   double magYh = magX * sin(phi) * sin(theta) + magY * cos(phi) - magZ * sin(phi) * cos(theta);
 
-  // Compute yaw (psi)
-  double psi = atan2(magYh, magXh);
-
-  // Convert to degrees and adjust to standard compass directions
-  double yawDegrees = (psi * 180 / pi + 90) % 360;
-  
-  // Ensure the result is between 0 and 360
+  double yawRad = atan2(magYh, magXh);
+  yawRad -= pi/2;
+  yawRad *= -1;
+  double yawDegrees = (yawRad * 180 / pi);
   if (yawDegrees < 0) yawDegrees += 360;
-
+  
   setState(() {
     _yawDegrees = yawDegrees;
   });
@@ -102,6 +94,7 @@ void _updateYaw() {
       child: JuiceWidget(
         juice: widget.juice,
         height: drinkHeight,
+        rotation: _yawDegrees
       ),
     );
   }

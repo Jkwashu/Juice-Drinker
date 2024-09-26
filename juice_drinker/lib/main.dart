@@ -2,9 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:juice_drinker/objects/juice.dart';
 import 'package:juice_drinker/pages/juice_page.dart';
 import 'package:juice_drinker/pages/shop_page.dart';
+import 'package:flutter/services.dart';
 
 void main() {
-  runApp(const MainApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]).then((_) {
+    runApp(const MainApp());
+  });
 }
 
 class MainApp extends StatelessWidget {
