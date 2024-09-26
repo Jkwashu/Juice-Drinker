@@ -22,7 +22,8 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       title: 'Juice Drinker',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 124, 207, 216)),
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color.fromARGB(255, 124, 207, 216)),
         useMaterial3: true,
       ),
       home: const HomePage(),
@@ -39,8 +40,20 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  int _coins = 100;
+  Juice _currentJuice = Juice(
+      color: const Color.fromARGB(255, 20, 251, 255),
+      name: 'Water',
+      price: 0); // INITIAL JUICE
+  List<Juice> _purchasedJuices = [];
 
-  Juice _currentJuice = Juice(color: const Color.fromARGB(255, 20, 251, 255), name: 'Water'); // INITIAL JUICE
+  final List<Juice> _allJuices = [
+    Juice(color: Colors.orange, name: 'Orange Juice', price: 20),
+    Juice(color: Colors.purple, name: 'Grape Juice', price: 20),
+    Juice(color: Colors.red, name: 'Cranberry Juice', price: 20),
+    Juice(color: Colors.blue, name: 'Blueberry Juice', price: 20),
+    Juice(color: Colors.green, name: 'Grapefruit Juice', price: 20),
+  ];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -55,12 +68,33 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void _updateCoins(int amount) {
+    setState(() {
+      _coins += amount;
+    });
+  }
+
+  void _purchaseJuice(Juice juice) {
+    if (!_purchasedJuices.contains(juice)) {
+      setState(() {
+        _purchasedJuices.add(juice);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // Pass the current juice to JuicePage and update method to ShopPage
     final List<Widget> pages = <Widget>[
       JuicePage(juice: _currentJuice),
-      ShopPage(), // Passing update function
+      ShopPage(
+        onJuiceUpdate: _updateJuice,
+        coins: _coins,
+        onCoinUpdate: _updateCoins,
+        onPurchase: _purchaseJuice,
+        purchasedJuices: _purchasedJuices,
+        allJuices: _allJuices,
+      ), // Passing update function
     ];
 
     return Scaffold(
@@ -82,4 +116,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
