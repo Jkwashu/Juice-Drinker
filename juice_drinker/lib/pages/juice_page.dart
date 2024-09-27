@@ -119,7 +119,7 @@ class _JuicePageState extends State<JuicePage> {
   } 
 
   void _updateDrinkHeight() {
-    if (_yawDegrees >= 45 && _yawDegrees <= 225) {
+    if (_yawDegrees >= 45 && _yawDegrees <= 315) {
       setState(() {
         //how fast the drink goes down
         drinkHeight = max(0, drinkHeight - 0.005);
