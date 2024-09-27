@@ -36,9 +36,6 @@ Widget build(BuildContext context) {
                 value: height,
                 valueColor: AlwaysStoppedAnimation(juice.color),
                 direction: Axis.vertical,
-                center: Text(
-                  '${(height * 100).toStringAsFixed(0)}%',
-                ),
               ),
             ),
           ),

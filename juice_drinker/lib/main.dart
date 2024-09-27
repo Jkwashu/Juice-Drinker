@@ -40,9 +40,9 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-  int _coins = 0;
+  int _coins = 100;
   Juice _currentJuice = Juice(
-      color: const Color.fromARGB(255, 20, 251, 255),
+      color: const Color.fromARGB(255, 33, 150, 243),
       name: 'Water',
       price: 0); // INITIAL JUICE
   List<Juice> _purchasedJuices = [];
@@ -51,7 +51,6 @@ class _HomePageState extends State<HomePage> {
     Juice(color: Colors.orange, name: 'Orange Juice', price: 20),
     Juice(color: Colors.purple, name: 'Grape Juice', price: 20),
     Juice(color: Colors.red, name: 'Cranberry Juice', price: 20),
-    Juice(color: Colors.blue, name: 'Blueberry Juice', price: 20),
     Juice(color: Colors.green, name: 'Grapefruit Juice', price: 20),
   ];
 
@@ -103,17 +102,28 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: const Color.fromARGB(255, 33, 150, 243),
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.local_drink, size: 32),
+            icon: Icon(
+              Icons.local_drink,
+              size: 32,
+              color: Colors.white, // Icon color set to white
+            ),
             label: 'Juice',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_basket_outlined, size: 32),
+            icon: Icon(
+              Icons.shopping_basket_outlined,
+              size: 32,
+              color: Colors.white, // Icon color set to white
+            ),
             label: 'Shop',
           ),
         ],
         currentIndex: _selectedIndex,
+        selectedItemColor: Colors.white, // Text color set to white
+        unselectedItemColor: Colors.white, // Unselected item text color set to white
         onTap: _onItemTapped,
       ),
     );

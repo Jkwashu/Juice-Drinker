@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:juice_drinker/objects/juice.dart';
+import 'package:juice_drinker/widgets/juice_item_widget.dart';
 
 class ShopPage extends StatefulWidget {
   final Function(Juice) onJuiceUpdate;
@@ -24,99 +25,73 @@ class ShopPage extends StatefulWidget {
 }
 
 class _ShopPageState extends State<ShopPage> {
-  int _currentIndex = 0;
-
-  void _purchaseJuice() {
-    if (widget.coins >= widget.allJuices[_currentIndex].price &&
-        !widget.purchasedJuices.contains(widget.allJuices[_currentIndex])) {
-      setState(() {
-        widget.onPurchase(widget.allJuices[_currentIndex]);
-        widget.onJuiceUpdate(widget.allJuices[_currentIndex]);
-        widget.onCoinUpdate(-widget.allJuices[_currentIndex].price);
-      });
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Not enough coins or already purchased!')),
-      );
-    }
-  }
-
-  void _equipJuice() {
-    widget.onJuiceUpdate(widget.allJuices[_currentIndex]);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-          content: Text('${widget.allJuices[_currentIndex].name} equipped!')),
-    );
-  }
-
-  void _nextJuice() {
-    setState(() {
-      _currentIndex = (_currentIndex + 1) % widget.allJuices.length;
-    });
-  }
-
-  void _previousJuice() {
-    setState(() {
-      _currentIndex = (_currentIndex - 1 + widget.allJuices.length) %
-          widget.allJuices.length;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Juice Shop'),
+        backgroundColor: const Color.fromARGB(255, 33, 150, 243),
+        title: const Text(
+          'Shop',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         actions: [
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
-                const Icon(Icons.monetization_on),
+                const Icon(Icons.monetization_on, color: Colors.yellow, size: 28),
                 const SizedBox(width: 4),
-                Text('${widget.coins}'),
+                Text(
+                  '${widget.coins}',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ],
             ),
           ),
         ],
       ),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.arrow_back_ios),
-                onPressed: _previousJuice,
-              ),
-              Container(
-                width: 200,
-                height: 200,
-                color: widget.allJuices[_currentIndex].color,
-                child: Center(
-                  child: Text(
-                    widget.allJuices[_currentIndex].name,
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.arrow_forward_ios),
-                onPressed: _nextJuice,
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed:
-                widget.purchasedJuices.contains(widget.allJuices[_currentIndex])
-                    ? _equipJuice
-                    : _purchaseJuice,
-            child: Text(
-                widget.purchasedJuices.contains(widget.allJuices[_currentIndex])
-                    ? 'Equip'
-                    : 'Buy for ${widget.allJuices[_currentIndex].price} coins'),
+          Expanded(
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: widget.allJuices.length,
+              itemBuilder: (context, index) {
+                final juice = widget.allJuices[index];
+                return JuiceItem(
+                  juice: juice,
+                  isPurchased: widget.purchasedJuices.contains(juice),
+                  onPurchase: () {
+                    if (widget.coins >= juice.price) {
+                      widget.onPurchase(juice);
+                      widget.onJuiceUpdate(juice);
+                      widget.onCoinUpdate(-juice.price);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Not enough coins or already purchased!'),
+                        ),
+                      );
+                    }
+                  },
+                  onEquip: () {
+                    widget.onJuiceUpdate(juice);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('${juice.name} equipped!')),
+                    );
+                  },
+                  coins: widget.coins,
+                );
+              },
+            ),
           ),
         ],
       ),
