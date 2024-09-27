@@ -2,9 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:juice_drinker/objects/juice.dart';
 import 'package:juice_drinker/pages/juice_page.dart';
 import 'package:juice_drinker/pages/shop_page.dart';
+import 'package:flutter/services.dart';
 
 void main() {
-  runApp(const MainApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]).then((_) {
+    runApp(const MainApp());
+  });
 }
 
 class MainApp extends StatelessWidget {
@@ -33,7 +40,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-  int _coins = 100;
+  int _coins = 0;
   Juice _currentJuice = Juice(
       color: const Color.fromARGB(255, 20, 251, 255),
       name: 'Water',
@@ -79,7 +86,10 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     // Pass the current juice to JuicePage and update method to ShopPage
     final List<Widget> pages = <Widget>[
-      JuicePage(juice: _currentJuice),
+      JuicePage(
+        juice: _currentJuice,
+        onCoinUpdate: _updateCoins,
+      ),
       ShopPage(
         onJuiceUpdate: _updateJuice,
         coins: _coins,
