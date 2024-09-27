@@ -7,14 +7,20 @@ import 'package:sensors_plus/sensors_plus.dart';
 
 class JuicePage extends StatefulWidget {
   final Juice juice;
-  const JuicePage({super.key, required this.juice});
+  final Function(int) onCoinUpdate;
+  const JuicePage({
+    super.key,
+    required this.juice,
+    required this.onCoinUpdate,
+  });
 
   @override
   _JuicePageState createState() => _JuicePageState();
 }
 
 class _JuicePageState extends State<JuicePage> {
-  double drinkHeight = 0.9; 
+  double drinkHeight = 0.9;
+  bool _hasAwardedCoins = false;
 
   StreamSubscription<MagnetometerEvent>? _magnetometerSubscription;
   StreamSubscription<AccelerometerEvent>? _accelerometerSubscription;
@@ -24,13 +30,14 @@ class _JuicePageState extends State<JuicePage> {
   AccelerometerEvent? _accelerometerEvent;
   GyroscopeEvent? _gyroscopeEvent;
 
-  double _yawDegrees = 0.0; 
+  double _yawDegrees = 0.0;
 
   Timer? _drinkTimer;
 
   DateTime? _lastShake;
   final _shakeThreshold = 4.0; //rad/s
-  final _shakeInterval = Duration(milliseconds: 500); //minimum time between shakes
+  final _shakeInterval =
+      Duration(milliseconds: 500); //minimum time between shakes
 
   bool get isEmpty => drinkHeight <= 0;
 
@@ -42,7 +49,7 @@ class _JuicePageState extends State<JuicePage> {
       (MagnetometerEvent event) {
         setState(() {
           _magnetometerEvent = event;
-          _updateYaw(); 
+          _updateYaw();
         });
       },
     );
@@ -51,7 +58,7 @@ class _JuicePageState extends State<JuicePage> {
       (AccelerometerEvent event) {
         setState(() {
           _accelerometerEvent = event;
-          _updateYaw(); 
+          _updateYaw();
         });
       },
     );
@@ -65,7 +72,7 @@ class _JuicePageState extends State<JuicePage> {
       },
     );
     //keep this at 50 (how smooth the liquid goes down  )
-     _drinkTimer = Timer.periodic(Duration(milliseconds: 50), (timer) {
+    _drinkTimer = Timer.periodic(Duration(milliseconds: 50), (timer) {
       _updateDrinkHeight();
     });
   }
@@ -81,7 +88,7 @@ class _JuicePageState extends State<JuicePage> {
 
   void _updateYaw() {
     if (_magnetometerEvent == null || _accelerometerEvent == null) {
-      return; 
+      return;
     }
 
     double accelX = _accelerometerEvent!.x;
@@ -96,14 +103,16 @@ class _JuicePageState extends State<JuicePage> {
     double magZ = _magnetometerEvent!.z;
 
     double magXh = magX * cos(theta) + magZ * sin(theta);
-    double magYh = magX * sin(phi) * sin(theta) + magY * cos(phi) - magZ * sin(phi) * cos(theta);
+    double magYh = magX * sin(phi) * sin(theta) +
+        magY * cos(phi) -
+        magZ * sin(phi) * cos(theta);
 
     double yawRad = atan2(magYh, magXh);
-    yawRad -= pi/2;
+    yawRad -= pi / 2;
     yawRad *= -1;
     double yawDegrees = (yawRad * 180 / pi);
     if (yawDegrees < 0) yawDegrees += 360;
-    
+
     setState(() {
       _yawDegrees = yawDegrees;
     });
@@ -114,8 +123,13 @@ class _JuicePageState extends State<JuicePage> {
       setState(() {
         //how fast the drink goes down
         drinkHeight = max(0, drinkHeight - 0.005);
+
+        if (drinkHeight == 0 && !_hasAwardedCoins) {
+          widget.onCoinUpdate(5);
+          _hasAwardedCoins = true;
+        }
       });
-    } 
+    }
   }
 
   void _detectShake() {
@@ -128,7 +142,6 @@ class _JuicePageState extends State<JuicePage> {
     if ((x > _shakeThreshold) ||
         (y > _shakeThreshold) ||
         (z > _shakeThreshold)) {
-      
       DateTime now = DateTime.now();
       if (_lastShake == null || now.difference(_lastShake!) > _shakeInterval) {
         _lastShake = now;
@@ -139,7 +152,8 @@ class _JuicePageState extends State<JuicePage> {
 
   void _refillJuice() {
     setState(() {
-      drinkHeight = 0.9; 
+      drinkHeight = 0.9;
+      _hasAwardedCoins = false;
     });
   }
 
@@ -147,10 +161,7 @@ class _JuicePageState extends State<JuicePage> {
   Widget build(BuildContext context) {
     return Center(
       child: JuiceWidget(
-        juice: widget.juice,
-        height: drinkHeight,
-        rotation: _yawDegrees
-      ),
+          juice: widget.juice, height: drinkHeight, rotation: _yawDegrees),
     );
   }
 }
