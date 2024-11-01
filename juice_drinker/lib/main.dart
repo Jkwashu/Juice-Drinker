@@ -52,6 +52,7 @@ class _HomePageState extends State<HomePage> {
     Juice(color: Colors.purple, name: 'Grape Juice', price: 20),
     Juice(color: Colors.red, name: 'Cranberry Juice', price: 20),
     Juice(color: Colors.green, name: 'Grapefruit Juice', price: 20),
+    Juice(color: const Color.fromARGB(255, 255, 205, 5), name: 'Wheat Juice', price: 30, fizzy: true),
   ];
 
   void _onItemTapped(int index) {
@@ -60,6 +61,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  
   // Method to update the current juice (use this in ShopPage later)
   void _updateJuice(Juice newJuice) {
     setState(() {
