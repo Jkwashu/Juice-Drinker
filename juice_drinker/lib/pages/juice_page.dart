@@ -95,22 +95,20 @@ class _JuicePageState extends State<JuicePage> {
     double accelY = _accelerometerEvent!.y;
     double accelZ = _accelerometerEvent!.z;
 
-    double phi = atan2(accelY, accelZ);
+    /*double phi = atan2(accelY, accelZ);
     double theta = atan2(-accelX, sqrt(accelY * accelY + accelZ * accelZ));
 
     double magX = _magnetometerEvent!.x;
     double magY = _magnetometerEvent!.y;
-    double magZ = _magnetometerEvent!.z;
+    double magZ = _magnetometerEvent!.z;*/
 
-    double magXh = magX * cos(theta) + magZ * sin(theta);
+    /*double magXh = magX * cos(theta) + magZ * sin(theta);
     double magYh = magX * sin(phi) * sin(theta) +
         magY * cos(phi) -
-        magZ * sin(phi) * cos(theta);
+        magZ * sin(phi) * cos(theta);*/
 
-    double yawRad = atan2(magYh, magXh);
-    yawRad -= pi / 2;
-    yawRad *= -1;
-    double yawDegrees = (yawRad * 180 / pi);
+    double yawRad = atan2(accelX, accelY);
+    double yawDegrees = (yawRad * (180/pi));
     if (yawDegrees < 0) yawDegrees += 360;
 
     setState(() {
