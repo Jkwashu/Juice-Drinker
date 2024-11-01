@@ -61,16 +61,11 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void apply_fizz(Juice currentJuice){
-
-  }
+  
   // Method to update the current juice (use this in ShopPage later)
   void _updateJuice(Juice newJuice) {
     setState(() {
       _currentJuice = newJuice;
-      if (_currentJuice.fizzy){
-        apply_fizz(_currentJuice);
-      }
     });
   }
 
